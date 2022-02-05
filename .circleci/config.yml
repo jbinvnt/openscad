@@ -4,6 +4,7 @@ jobs:
     working_directory: ~/workspace
     docker:
       - image: openscad/mxe-i686-gui:latest
+    resource_class: large
     steps:
       - checkout
       - run:
@@ -35,6 +36,7 @@ jobs:
     working_directory: ~/workspace
     docker:
       - image: openscad/mxe-x86_64-gui:latest
+    resource_class: large
     steps:
       - checkout
       - run:
@@ -66,6 +68,7 @@ jobs:
     working_directory: ~/workspace
     docker:
       - image: openscad/appimage-x86_64-base:latest
+    resource_class: large
     steps:
       - checkout
       - run:
@@ -80,7 +83,9 @@ jobs:
               if [ x"${CIRCLE_BRANCH}" = xmaster ]; then export SUFFIX=""; else export SUFFIX="_$(echo ${CIRCLE_BRANCH} | sed -e 's,pull/,PR,')"; fi
               qmake -v
               qmake CONFIG+=experimental CONFIG+=snapshot CONFIG-=debug PREFIX=/usr VERSION="$OPENSCAD_VERSION" OPENSCAD_COMMIT="$OPENSCAD_COMMIT"
-              make -j2
+              make -j4
+              pwd
+              ls -la icons
               make install INSTALL_ROOT=AppDir
               export PATH=/appimage/usr/bin:"$PATH"
               mv -iv AppDir/usr/share/applications/openscad.desktop AppDir/usr/share/applications/org.openscad.OpenSCAD.desktop
