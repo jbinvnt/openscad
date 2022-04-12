@@ -149,6 +149,12 @@ get_ubuntu_16_deps()
   get_debian_8_deps
 }
 
+get_ubuntu_18_deps()
+{
+  get_ubuntu_16_deps
+  ./scripts/uni-build-dependencies.sh cgal
+}
+
 get_neon_deps()
 {
   get_debian_8_deps
@@ -174,8 +180,10 @@ unknown()
 if [ -e /etc/issue ]; then
  if [ "`grep -i ubuntu.1[4-5] /etc/issue`" ]; then
   get_ubuntu_14_deps
- elif [ "`grep -i ubuntu.1[6-9] /etc/issue`" ]; then
+ elif [ "`grep -i ubuntu.1[6-7] /etc/issue`" ]; then
   get_ubuntu_16_deps
+ elif [ "`grep -i ubuntu.1[8-9] /etc/issue`" ]; then
+  get_ubuntu_18_deps
  elif [ "`grep -i ubuntu.2[0-4] /etc/issue`" ]; then
   get_ubuntu_16_deps
  elif [ "`grep -i ubuntu /etc/issue`" ]; then

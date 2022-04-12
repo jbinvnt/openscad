@@ -11,7 +11,7 @@ test -d openscad || git clone --depth=50 --branch=master https://github.com/open
 mkdir -p docker
 cat <<'EOF'> docker/Dockerfile
 # openscad build env.
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 RUN apt-get update -y; apt-get install -y git gcc
 
 ENV CXX=g++
@@ -32,7 +32,7 @@ fi
 RUN()
 {
   rm -f docker/cid 
-  docker run --cidfile docker/cid -v $PWD/openscad:/github/openscad -v /etc/passwd:/etc/passwd:ro --user $(stat -c "%u:%g" openscad) --workdir /github/openscad openscad-build "$@"
+  docker run --cidfile docker/cid -v "$PWD"/openscad:/github/openscad -v /etc/passwd:/etc/passwd:ro --user $(stat -c "%u:%g" openscad) --workdir /github/openscad openscad-build "$@"
 }
 commit() { docker commit $(cat docker/cid) openscad-build; }
 
