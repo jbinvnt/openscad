@@ -12,7 +12,8 @@ mkdir -p docker
 cat <<'EOF'> docker/Dockerfile
 # openscad build env.
 FROM ubuntu:18.04
-RUN apt-get update -y; apt-get install -y git gcc
+RUN apt-get update -y; apt-get install -y git gcc wget
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.12.4/cmake-3.12.4-Linux-x86_64.sh
 
 ENV CXX=g++
 ENV CC=gcc
