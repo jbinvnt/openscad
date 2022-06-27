@@ -98,7 +98,7 @@ void OpenCSGRenderer::prepare(bool /*showfaces*/, bool showedges, const shaderin
 
 void OpenCSGRenderer::draw(bool /*showfaces*/, bool showedges, const shaderinfo_t *shaderinfo) const
 {
-  if (!shaderinfo && showedges) shaderinfo = &getShader();
+  if (!shaderinfo) shaderinfo = &getShader();
 
   if (!Feature::ExperimentalVxORenderers.is_enabled()) {
     if (this->root_products) {
@@ -388,8 +388,8 @@ void OpenCSGRenderer::renderCSGProducts(const std::shared_ptr<CSGProducts>& prod
       }
 
       if (shaderinfo && shaderinfo->progid) {
-        if (shaderinfo->type != EDGE_RENDERING ||
-            (shaderinfo->type == EDGE_RENDERING && showedges)) glUseProgram(shaderinfo->progid); GL_ERROR_CHECK();
+        glUseProgram(shaderinfo->progid);
+        GL_ERROR_CHECK();
       }
 
       for (const auto& csgobj : product.intersections) {
@@ -478,9 +478,7 @@ void OpenCSGRenderer::renderCSGProducts(const std::shared_ptr<CSGProducts>& prod
         GL_TRACE("glUseProgram(%d)", shaderinfo->progid);
         glUseProgram(shaderinfo->progid); GL_ERROR_CHECK();
 
-        if (shaderinfo->type == EDGE_RENDERING && showedges) {
-          shader_attribs_enable();
-        }
+        shader_attribs_enable();
       }
 
       for (const auto& vs : product->states()) {

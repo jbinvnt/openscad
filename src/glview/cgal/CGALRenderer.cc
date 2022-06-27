@@ -281,6 +281,9 @@ void CGALRenderer::draw(bool showfaces, bool showedges, const shaderinfo_t * /*s
       }
     }
   } else {
+    glUseProgram(this->getShader().progid);
+    GL_ERROR_CHECK();
+    shader_attribs_enable();
     // grab current state to restore after
     GLfloat current_point_size, current_line_width;
     GLboolean origVertexArrayState = glIsEnabled(GL_VERTEX_ARRAY);
@@ -311,6 +314,7 @@ void CGALRenderer::draw(bool showfaces, bool showedges, const shaderinfo_t * /*s
     else p->set_style(SNC_SKELETON);
     p->draw(showfaces && showedges);
   }
+  glUseProgram(0);
 
   PRINTD("draw() end");
 }
