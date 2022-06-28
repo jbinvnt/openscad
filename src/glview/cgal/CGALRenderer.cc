@@ -281,8 +281,11 @@ void CGALRenderer::draw(bool showfaces, bool showedges, const shaderinfo_t * /*s
       }
     }
   } else {
+    GLint id;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &id);
     glUseProgram(this->getShader().progid);
     GL_ERROR_CHECK();
+    glGetIntegerv(GL_CURRENT_PROGRAM, &id);
     shader_attribs_enable();
     // grab current state to restore after
     GLfloat current_point_size, current_line_width;

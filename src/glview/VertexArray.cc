@@ -105,6 +105,8 @@ void VertexData::append(const VertexData& data) {
 
 void VertexState::draw(bool bind_buffers) const
 {
+  GLint id;
+  glGetIntegerv(GL_CURRENT_PROGRAM, &id);
   if (vertices_vbo_ && bind_buffers) {
     GL_TRACE("glBindBuffer(GL_ARRAY_BUFFER, %d)", vertices_vbo_);
     glBindBuffer(GL_ARRAY_BUFFER, vertices_vbo_); GL_ERROR_CHECK();

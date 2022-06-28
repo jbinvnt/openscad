@@ -388,8 +388,8 @@ void OpenCSGRenderer::renderCSGProducts(const std::shared_ptr<CSGProducts>& prod
       }
 
       if (shaderinfo && shaderinfo->progid) {
-        glUseProgram(shaderinfo->progid);
-        GL_ERROR_CHECK();
+        if (shaderinfo->type != EDGE_RENDERING ||
+            (shaderinfo->type == EDGE_RENDERING && showedges)) glUseProgram(shaderinfo->progid); GL_ERROR_CHECK();
       }
 
       for (const auto& csgobj : product.intersections) {
@@ -477,8 +477,9 @@ void OpenCSGRenderer::renderCSGProducts(const std::shared_ptr<CSGProducts>& prod
       if (shaderinfo && shaderinfo->progid) {
         GL_TRACE("glUseProgram(%d)", shaderinfo->progid);
         glUseProgram(shaderinfo->progid); GL_ERROR_CHECK();
-
-        shader_attribs_enable();
+        if (shaderinfo->type == EDGE_RENDERING && showedges) {
+          shader_attribs_enable();
+        }
       }
 
       for (const auto& vs : product->states()) {
