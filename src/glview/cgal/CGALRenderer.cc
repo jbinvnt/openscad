@@ -141,7 +141,6 @@ void CGALRenderer::createPolySets()
   VertexArray vertex_array(std::make_shared<VertexStateFactory>(), polyset_states);
   vertex_array.addEdgeData();
   vertex_array.addSurfaceData();
-  add_shader_data(vertex_array);
 
   if (Feature::ExperimentalVxORenderersDirect.is_enabled() || Feature::ExperimentalVxORenderersPrealloc.is_enabled()) {
     size_t vertices_size = 0, elements_size = 0;
@@ -181,7 +180,7 @@ void CGALRenderer::createPolySets()
 
   for (const auto& polyset : this->polysets) {
     Color4f color;
-    add_shader_pointers(vertex_array);
+
     PRINTD("polysets");
     if (polyset->getDimension() == 2) {
       PRINTD("2d polysets");
