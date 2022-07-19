@@ -327,6 +327,7 @@ public slots:
   void viewOrthogonal();
   void viewTogglePerspective();
   void viewResetView();
+  void setShader();
   void viewAll();
   void editorContentChanged();
   void selectObject(QPoint coordinate);
