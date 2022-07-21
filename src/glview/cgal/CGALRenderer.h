@@ -10,8 +10,8 @@
 class CGALRenderer : public VBORenderer
 {
 public:
-  CGALRenderer(const shared_ptr<const class Geometry>& geom);
-  ~CGALRenderer() override;
+  CGALRenderer(shared_ptr<const class Geometry> geom, const std::string* shaderDirectoryPath = nullptr);
+  ~CGALRenderer();
   void prepare(bool showfaces, bool showedges, const shaderinfo_t *shaderinfo = nullptr) override;
   void draw(bool showfaces, bool showedges, const shaderinfo_t *shaderinfo = nullptr) const override;
   void setColorScheme(const ColorScheme& cs) override;
