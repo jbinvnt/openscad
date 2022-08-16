@@ -326,15 +326,14 @@ public:
 class VertexArray
 {
 public:
-  using CreateVertexCallback = std::function<void (VertexArray& vertex_array,
-                                                   const std::array<Vector3d, 3>& points,
-                                                   const std::array<Vector3d, 3>& normals,
-                                                   const Color4f& color,
-                                                   size_t active_point_index, size_t primitive_index,
-                                                   double z_offset, size_t shape_size,
-                                                   size_t shape_dimensions, bool outlines,
-                                                   bool mirror)>;
-
+  typedef std::function<void (VertexArray & vertex_array,
+                              const std::array<Vector3d, 3>& points,
+                              const std::array<Vector3d, 3>& normals,
+                              const Color4f& color,
+                              size_t active_point_index, size_t primitive_index,
+                              double z_offset, size_t shape_size,
+                              size_t shape_dimensions, bool outlines,
+                              bool mirror, bool marked)> CreateVertexCallback;
 
   VertexArray(std::shared_ptr<VertexStateFactory> factory, VertexStates& states,
               GLuint vertices_vbo = 0, GLuint elements_vbo = 0)
@@ -381,7 +380,7 @@ public:
                     size_t active_point_index = 0, size_t primitive_index = 0,
                     double z_offset = 0, size_t shape_size = 0,
                     size_t shape_dimensions = 0, bool outlines = false,
-                    bool mirror = false, const CreateVertexCallback& vertex_callback = nullptr);
+                    bool mirror = false, bool marked = false, CreateVertexCallback vertex_callback = nullptr);
 
   // Return reference to the VertexStates
   inline VertexStates& states() { return states_; }
