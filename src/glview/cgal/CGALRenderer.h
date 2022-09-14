@@ -29,6 +29,7 @@ private:
   std::list<shared_ptr<const CGAL_Nef_polyhedron>> nefPolyhedrons;
 
   VertexStates polyset_states;
-  GLuint polyset_vertices_vbo{0};
-  GLuint polyset_elements_vbo{0};
+  GLuint polyset_vertices_vbo;
+  GLuint polyset_elements_vbo;
+  std::vector<bool> polyset_2d_locations;
 };
