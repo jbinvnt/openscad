@@ -152,6 +152,9 @@ void CGALRenderer::createPolySets(bool showfaces)
   vertex_array.addEdgeData();
   vertex_array.addSurfaceData();
   vertex_array.writeSurface();
+  if(Feature::ExperimentalLazyUnion.is_enabled()) {
+    add_shader_data(vertex_array);
+  }
 
   if (Feature::ExperimentalVxORenderersDirect.is_enabled() || Feature::ExperimentalVxORenderersPrealloc.is_enabled()) {
     size_t vertices_size = 0, elements_size = 0;
@@ -234,7 +237,9 @@ void CGALRenderer::createPolySets(bool showfaces)
       was_2d = true;
     } else {
       PRINTD("3d polysets");
-      add_shader_data(vertex_array);
+      if(!Feature::ExperimentalLazyUnion.is_enabled()) {
+        add_shader_data(vertex_array);
+      }
       vertex_array.writeSurface();
 
       // Create 3D polygons
@@ -249,11 +254,11 @@ void CGALRenderer::createPolySets(bool showfaces)
         std::shared_ptr<VertexState> color_state = std::make_shared<VBOShaderVertexState>(0, 0, vertex_array.verticesVBO(), vertex_array.elementsVBO());
         color_state->glBegin().emplace_back([shader_info, last_color, marked_color]() {
           GL_TRACE("glUniform4f(%d, %f, %f, %f, %f)", shader_info.data.csg_rendering.color_area % last_color[0] % last_color[1] % last_color[2] % last_color[3]);
-          glUniform4f(shader_info.data.csg_rendering.color_area, last_color[0], last_color[1], last_color[2], last_color[3]); GL_ERROR_CHECK();
+          GL_CHECKD(glUniform4f(shader_info.data.csg_rendering.color_area, last_color[0], last_color[1], last_color[2], last_color[3]));
           GL_TRACE("glUniform4f(%d, %f, %f, %f, 1.0)", shader_info.data.csg_rendering.color_edge % ((last_color[0] + 1) / 2) % ((last_color[1] + 1) / 2) % ((last_color[2] + 1) / 2));
-          glUniform4f(shader_info.data.csg_rendering.color_edge, (last_color[0] + 1) / 2, (last_color[1] + 1) / 2, (last_color[2] + 1) / 2, 1.0); GL_ERROR_CHECK();
+          GL_CHECKD(glUniform4f(shader_info.data.csg_rendering.color_edge, (last_color[0] + 1) / 2, (last_color[1] + 1) / 2, (last_color[2] + 1) / 2, 1.0));
           GL_TRACE("glUniform4f(%d, %f, %f, %f, %f)", shader_info.data.csg_rendering.color_marked % marked_color[0] % marked_color[1] % marked_color[2] % marked_color[3]);
-          glUniform4f(shader_info.data.csg_rendering.color_marked, marked_color[0], marked_color[1], marked_color[2], marked_color[3]); GL_ERROR_CHECK();
+          GL_CHECKD(glUniform4f(shader_info.data.csg_rendering.color_marked, marked_color[0], marked_color[1], marked_color[2], marked_color[3]));
         });
         polyset_states.emplace_back(std::move(color_state));
       }
@@ -333,8 +338,7 @@ void CGALRenderer::draw(bool showfaces, bool showedges, const shaderinfo_t * sha
       PRINTD("Fetching shaderinfo\n");
       shaderinfo = &getShader();
     }
-    glUseProgram(shaderinfo->progid);
-    GL_ERROR_CHECK();
+    GL_CHECKD(glUseProgram(shaderinfo->progid));
     GLint new_id;
     glGetIntegerv(GL_CURRENT_PROGRAM, &new_id);
     PRINTDB("Now, using shader ID: %d\n", new_id);
@@ -345,17 +349,17 @@ void CGALRenderer::draw(bool showfaces, bool showedges, const shaderinfo_t * sha
     GLboolean origNormalArrayState = glIsEnabled(GL_NORMAL_ARRAY);
     GLboolean origColorArrayState = glIsEnabled(GL_COLOR_ARRAY);
 
-    glGetFloatv(GL_POINT_SIZE, &current_point_size); GL_ERROR_CHECK();
-    glGetFloatv(GL_LINE_WIDTH, &current_line_width); GL_ERROR_CHECK();
+    GL_CHECKD(glGetFloatv(GL_POINT_SIZE, &current_point_size));
+    GL_CHECKD(glGetFloatv(GL_LINE_WIDTH, &current_line_width));
     size_t i{0};
     for (const auto& polyset : polyset_states) {
       if (polyset) {
-        if(polyset_2d_locations[i++]) {
-          glUseProgram(prev_id);
-          GL_ERROR_CHECK();
-        } else {
-          glUseProgram(new_id);
-          GL_ERROR_CHECK();
+        if (!Feature::ExperimentalLazyUnion.is_enabled()) {
+          if(polyset_2d_locations[i++]) {
+            GL_CHECKD(glUseProgram(prev_id));
+          } else {
+            GL_CHECKD(glUseProgram(new_id));
+          }
         }
         polyset->draw();
       }
