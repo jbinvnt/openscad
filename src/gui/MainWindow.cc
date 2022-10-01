@@ -504,6 +504,7 @@ MainWindow::MainWindow(const QStringList& filenames)
   connect(this->viewActionHideEditorToolBar, SIGNAL(triggered()), this, SLOT(hideEditorToolbar()));
   connect(this->viewActionHide3DViewToolBar, SIGNAL(triggered()), this, SLOT(hide3DViewToolbar()));
   connect(this->viewActionSetShader, SIGNAL(triggered()), this, SLOT(setShader()));
+  connect(this->viewActionUseDefaultShader, SIGNAL(triggered()), this, SLOT(useDefaultShader()));
   connect(this->windowActionHideEditor, SIGNAL(triggered()), this, SLOT(hideEditor()));
   connect(this->windowActionHideConsole, SIGNAL(triggered()), this, SLOT(hideConsole()));
   connect(this->windowActionHideCustomizer, SIGNAL(triggered()), this, SLOT(hideParameters()));
@@ -1395,17 +1396,25 @@ void MainWindow::actionOpen()
   }
 }
 
-void MainWindow::setShader()
-{
-  auto userOpenedPath = UIUtils::openDirectory(this);
-  std::string shaderLocation = userOpenedPath.toStdString();
-  LOG(message_group::None, Location::NONE, "", "User selected shader location: %1$s", shaderLocation);
+void MainWindow::useShader(const std::string& shaderLocation) {
+  LOG("User selected shader location: %1$s", shaderLocation);
   this->shader_directory_path = shaderLocation;
   const std::string result = this->qglview->renderer->setShader(shaderLocation);
   if(result.length() > 0) {
     QMessageBox::warning(this, "The selected shader location had an error.", QString::fromStdString(result));
   }
   this->qglview->update();
+}
+
+void MainWindow::setShader()
+{
+  auto userOpenedPath = UIUtils::openDirectory(this);
+  std::string shaderLocation = userOpenedPath.toStdString();
+  this->useShader(shaderLocation);
+}
+
+void MainWindow::useDefaultShader() {
+  this->useShader(QString::fromStdString(PlatformUtils::resourcePath("shaders").string()));
 }
 
 void MainWindow::actionNewWindow()
