@@ -60,6 +60,7 @@ option(PROFILE "Enable compiling with profiling / test coverage instrumentation"
 option(MXECROSS "Enable setup for MXE cross platform build" OFF)
 option(OFFLINE_DOCS "Download Documentation for offline usage" OFF)
 option(USE_MIMALLOC "Use mimalloc as malloc replacement." ON)
+#option(STATIC_GLEW "Statically link GLEW" ON)
 
 if(APPLE)
   option(APPLE_UNIX "Build OpenSCAD in Unix mode in MaxOS X instead of an Apple Bundle" OFF)
@@ -77,6 +78,10 @@ if(PROFILE)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
   SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}")
 endif()
+
+#if(STATIC_GLEW)
+#  target_compile_definitions(OpenSCAD PRIVATE GLEW_STATIC)
+#endif()
 
 if(WASM)
   set(NULLGL ON)
